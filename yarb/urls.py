@@ -19,5 +19,7 @@ from django.conf.urls import include
 
 
 urlpatterns = [
+    path('', include('recipes.urls')),
     path('admin/', admin.site.urls),
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
