@@ -1,0 +1,31 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      DJANGO_SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      PG_DB: ${{ secrets.POSTGRES_DB }}
+      PG_PASS: ${{ secrets.POSTGRES_PASSWORD }}
+      PG_USER: ${{ secrets.POSTGRES_USER }}
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build the docker-compose stack
+        run: docker-compose up -d
+      - name: Sleep
+        uses: jakejarvis/wait-action@master
+        with:
+          time: '60s'
+      - name: Check running containers
+        run: docker ps
+      - name: Run test suite
+        run: docker-compose run web python ./manage.py test recipes
