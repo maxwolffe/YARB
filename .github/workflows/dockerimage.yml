@@ -31,4 +31,4 @@ jobs:
       - name: Run test suite
         run: docker-compose run web coverage run --source . ./manage.py test recipes
       - name: Upload to coveralls
-        run: dock-compose run web coveralls
+        run: docker-compose run web coveralls
