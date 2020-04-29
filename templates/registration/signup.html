@@ -8,6 +8,11 @@
 
 <body>
   {% block content %}
+
+  {% if form.errors %}
+  <p>{{ form.errors }}</p>
+  {% endif %}
+
   <h2>Sign up</h2>
   <form method="post">
     {% csrf_token %}
