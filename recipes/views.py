@@ -1,9 +1,11 @@
 from django.shortcuts import render
-from .models import RecipeBook, MealPlan
+from .models import Recipe, RecipeBook, MealPlan
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views import generic
 
 
 # Create your views here.
@@ -23,10 +25,19 @@ def signup(request):
     return render(request, 'registration/signup.html', {'form': form})
 
 
-@login_required
-def index(request):
-    recipes_books = RecipeBook.objects.filter(owner=request.user)
-    context = {
-        'recipe_books': recipes_books,
-    }
-    return render(request, 'recipes/index.html', context)
+class RecipeBookDetailView(LoginRequiredMixin, generic.DetailView):
+    model = RecipeBook
+    template_name = 'recipes/recipe_book_detail.html'
+
+
+class RecipeDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Recipe
+    template_name = 'recipes/recipe_detail.html'
+
+
+class RecipeBookIndexView(LoginRequiredMixin, generic.ListView):
+    model = RecipeBook
+    template_name = 'recipes/index.html'
+
+    def get_queryset(self):
+        return RecipeBook.objects.filter(owner=self.request.user)
