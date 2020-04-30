@@ -25,19 +25,29 @@ def signup(request):
     return render(request, 'registration/signup.html', {'form': form})
 
 
-class RecipeBookDetailView(LoginRequiredMixin, generic.DetailView):
-    model = RecipeBook
-    template_name = 'recipes/recipe_book_detail.html'
-
-
-class RecipeDetailView(LoginRequiredMixin, generic.DetailView):
-    model = Recipe
-    template_name = 'recipes/recipe_detail.html'
-
-
 class RecipeBookIndexView(LoginRequiredMixin, generic.ListView):
     model = RecipeBook
     template_name = 'recipes/index.html'
 
     def get_queryset(self):
         return RecipeBook.objects.filter(owner=self.request.user)
+
+
+class RecipeBookDetailView(LoginRequiredMixin, generic.DetailView):
+    model = RecipeBook
+    template_name = 'recipes/recipebook_detail.html'
+
+
+class RecipeBookCreateView(LoginRequiredMixin, generic.edit.CreateView):
+    model = RecipeBook
+    fields = ['title', 'author']
+    success_url = '/recipe_books'
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
+
+class RecipeDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Recipe
+    template_name = 'recipes/recipe_detail.html'
