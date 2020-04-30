@@ -8,15 +8,16 @@
 
 <body>
   <h1>Recipe Books</h1>
-  {% if recipe_books %}
+  {% if recipebook_list %}
   <ul>
-    {% for book in recipe_books %}
-    <li>{{ book.title }}</li>
+    {% for book in recipebook_list %}
+    <li>{{ book }}</li>
     {% endfor %}
   </ul>
   {% else %}
   <p> You have no Recipe Books, go add one!</p>
   {% endif %}
+  <a href="{% url 'recipe_book_create' %}">Add a Recipe</a>
 </body>
 
 </html>
