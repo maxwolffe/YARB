@@ -6,6 +6,7 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import generic
+from guardian.mixins import PermissionRequiredMixin
 
 
 # Create your views here.
@@ -27,15 +28,16 @@ def signup(request):
 
 class RecipeBookIndexView(LoginRequiredMixin, generic.ListView):
     model = RecipeBook
-    template_name = 'recipes/index.html'
+    template_name = 'recipes/recipebook_index.html'
 
     def get_queryset(self):
         return RecipeBook.objects.filter(owner=self.request.user)
 
 
-class RecipeBookDetailView(LoginRequiredMixin, generic.DetailView):
+class RecipeBookDetailView(LoginRequiredMixin, PermissionRequiredMixin, generic.DetailView):
     model = RecipeBook
     template_name = 'recipes/recipebook_detail.html'
+    permission_required = 'view_recipebook'
 
 
 class RecipeBookCreateView(LoginRequiredMixin, generic.edit.CreateView):
@@ -48,6 +50,22 @@ class RecipeBookCreateView(LoginRequiredMixin, generic.edit.CreateView):
         return super().form_valid(form)
 
 
-class RecipeDetailView(LoginRequiredMixin, generic.DetailView):
+class RecipeBookDeleteView(LoginRequiredMixin, generic.edit.DeleteView):
+    model = RecipeBook
+    success_url = '/recipe_books'
+
+
+class RecipeBookUpdateView(LoginRequiredMixin, generic.edit.CreateView):
+    model = RecipeBook
+    fields = ['title', 'author']
+    success_url = '/recipe_books'
+
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)
+
+
+class RecipeDetailView(LoginRequiredMixin, PermissionRequiredMixin, generic.DetailView):
     model = Recipe
     template_name = 'recipes/recipe_detail.html'
+    permission_required = 'view_recipe'

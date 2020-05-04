@@ -11,13 +11,16 @@
   {% if recipebook_list %}
   <ul>
     {% for book in recipebook_list %}
-    <li>{{ book }}</li>
+    <li><a href="{% url 'recipe_book_detail' book.id %}">{{ book }} </a> - <a
+        href="{% url 'recipe_book_update' book.id %}">Update</a> -
+      <a href="{% url 'recipe_book_delete' book.id %}">Delete</a>
+    </li>
     {% endfor %}
   </ul>
   {% else %}
   <p> You have no Recipe Books, go add one!</p>
   {% endif %}
-  <a href="{% url 'recipe_book_create' %}">Add a Recipe</a>
+  <a href="{% url 'recipe_book_create' %}">Add a Recipe Book</a>
 </body>
 
 </html>
