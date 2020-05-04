@@ -1,0 +1,5 @@
+DJANGO_SECRET_KEY=bj1m^-indr=p$kx7pote@-u-0@o##zcvl$k&(g7($j5
+POSTGRES_DB=postgres
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+DJANGO_DEBUG=True

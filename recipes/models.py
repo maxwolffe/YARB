@@ -40,6 +40,7 @@ class MealPlan(models.Model):
     def __str__(self):
         return self.title + " " + self.created_at
 
+
 # Forms
 # TODO Move to forms.py
 
