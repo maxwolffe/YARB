@@ -17,7 +17,12 @@ urlpatterns = [
 
     # Recipes
     path('recipes/<int:pk>', views.RecipeDetailView.as_view(), name='recipe_detail'),
-
+    path('recipes/new', views.RecipeCreateView.as_view(),
+         name='recipe_create'),
+    path('recipes/<int:pk>/update', views.RecipeUpdateView.as_view(),
+         name='recipe_update'),
+    path('recipes/<int:pk>/delete', views.RecipeDeleteView.as_view(),
+         name='recipe_delete'),
     # Meal Lists
 
 

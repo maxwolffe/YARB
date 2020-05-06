@@ -9,9 +9,9 @@ logger = logging.getLogger("signals.py")
 
 
 @receiver(post_save, sender=RecipeBook)
-def set_permissions(sender, instance, **kwargs):
+def set_recipe_book_permissions(sender, instance, **kwargs):
     """Add object specific permission to the author"""
-    logger.info("Creating permissions!")
+    logger.info("Creating permissions for RecipeBooks!")
 
     assign_perm(
         "view_recipebook",
@@ -22,5 +22,23 @@ def set_permissions(sender, instance, **kwargs):
     assign_perm(
         "change_recipebook",
         instance.owner,
+        instance
+    )
+
+
+@receiver(post_save, sender=Recipe)
+def set_recipe_permissions(sender, instance, **kwargs):
+    """Add object specific permission to the author"""
+    logger.info("Creating permissions for Recipes!")
+
+    assign_perm(
+        "view_recipe",
+        instance.recipe_book.owner,
+        instance
+    )
+
+    assign_perm(
+        "change_recipe",
+        instance.recipe_book.owner,
         instance
     )
