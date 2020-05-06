@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from .models import Recipe, RecipeBook, MealPlan
-from django.shortcuts import render, redirect
+from .forms import RecipeModelForm
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views import generic
+from django.views import generic, View
 from guardian.mixins import PermissionRequiredMixin
 
 
@@ -39,6 +40,11 @@ class RecipeBookDetailView(LoginRequiredMixin, PermissionRequiredMixin, generic.
     template_name = 'recipes/recipebook_detail.html'
     permission_required = 'view_recipebook'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['recipe_list'] = self.object.recipe_set.all()
+        return context
+
 
 class RecipeBookCreateView(LoginRequiredMixin, generic.edit.CreateView):
     model = RecipeBook
@@ -55,7 +61,7 @@ class RecipeBookDeleteView(LoginRequiredMixin, generic.edit.DeleteView):
     success_url = '/recipe_books'
 
 
-class RecipeBookUpdateView(LoginRequiredMixin, generic.edit.CreateView):
+class RecipeBookUpdateView(LoginRequiredMixin, generic.edit.UpdateView):
     model = RecipeBook
     fields = ['title', 'author']
     success_url = '/recipe_books'
@@ -69,3 +75,42 @@ class RecipeDetailView(LoginRequiredMixin, PermissionRequiredMixin, generic.Deta
     model = Recipe
     template_name = 'recipes/recipe_detail.html'
     permission_required = 'view_recipe'
+
+
+class RecipeCreateView(generic.CreateView, LoginRequiredMixin):
+    template_name = 'recipes/recipe_form.html'
+
+    def get(self, request, *args, **kwargs):
+        form = RecipeModelForm(user=request.user)
+        context = {"form": form}
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        form = RecipeModelForm(request.POST, user=request.user)
+        if form.is_valid():
+            form.save()
+        context = {"form": form}
+        return render(request, self.template_name, context)
+
+
+class RecipeUpdateView(generic.UpdateView, PermissionRequiredMixin, LoginRequiredMixin):
+    template_name = 'recipes/recipe_form.html'
+    permission_required = 'view_recipe'
+
+    def get(self, request, *args, **kwargs):
+        recipe = get_object_or_404(Recipe, pk=self.kwargs['pk'])
+        form = RecipeModelForm(instance=recipe, user=request.user)
+        context = {"form": form}
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        form = RecipeModelForm(request.POST, user=request.user)
+        if form.is_valid():
+            form.save()
+        context = {"form": form}
+        return render(request, self.template_name, context)
+
+
+class RecipeDeleteView(LoginRequiredMixin, generic.edit.DeleteView):
+    model = Recipe
+    success_url = '/recipe_books'
