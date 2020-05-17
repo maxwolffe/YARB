@@ -37,6 +37,7 @@ class TestForms(TestCase):
             user=User.objects.create(username="imposter"),
             data={
                 'title': "Fill'er up chicken",
+                'recipe_book': RecipeBook.objects.get(title="Test Recipebook"),
                 'instructions': "asdf",
                 'ingredients': "asdf"
             }
