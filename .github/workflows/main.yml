@@ -29,13 +29,12 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.CR_PAT }}
+          password: ${{ secrets.GHCR_PAT }}
       
       - name: Build and publish image to registry
         uses: docker/build-push-action@v2.2.2
         with:
-          registry: ghcr.io
           push: true
-          repository: maxwolffe/YARB/YARB
-          tag_with_ref: true
+          tags: |
+            ghcr.io/maxwolffe/YARB:latest 
             
